@@ -25,7 +25,7 @@ var initialVol = 0.000;
 
 oscillator.type = 'sine';
 oscillator.frequency.value = 0; // value in hertz
-//oscillator.detune.value = 100; // value in cents
+oscillator.detune.value = 100; // value in cents
 oscillator.start();
 
 oscillator.onended = function() {
@@ -71,7 +71,7 @@ function play_piano(){
         }, ( i * duration ) );
         setTimeout( function(){
             gainNode.gain.value = 0;
-        }, ( i * duration ) + ( 0.75 * duration ) );
+        }, ( i * duration ) + ( 0.5 * duration ) );
     }
     // throw it into the stack!!!!
     for( var i = 0; i < array.length; i++ ){
