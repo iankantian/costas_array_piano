@@ -25,7 +25,6 @@ var initialVol = 0.000;
 
 oscillator.type = 'sine';
 oscillator.frequency.value = 0; // value in hertz
-oscillator.detune.value = 100; // value in cents
 oscillator.start();
 
 oscillator.onended = function() {
@@ -62,16 +61,20 @@ function play_piano(){
     var duration = 100;
     var array = piano_array();
     var ping_array = costas_array(89);
+    console.log( array_diff_vector( ping_array ) );
+
+    var rand_array = costas_rand_array(89);
 
     // working around the lack of block scope in ES5 and below
     function in_loop( i ){
         setTimeout( function(){
             oscillator.frequency.value = array[ ping_array[ i ] -1 ];
+            //oscillator.frequency.value = array[ parseInt(rand_array[ i ]) ];
             gainNode.gain.value = maxVol;
         }, ( i * duration ) );
         setTimeout( function(){
             gainNode.gain.value = 0;
-        }, ( i * duration ) + ( 0.5 * duration ) );
+        }, ( i * duration ) + ( 0.75 * duration ) );
     }
     // throw it into the stack!!!!
     for( var i = 0; i < array.length; i++ ){
