@@ -55,36 +55,38 @@ var CurY;
 //    canvasDraw();
 //}
 
+
+// play the discordant Costas Array of 89 prime!
 function play_piano(){
     gainNode.connect(audioCtx.destination);
     // millis each note plays!
     var duration = 100;
-    var array = piano_array(); // frequencies, in Hz of the keys of the piano
-    var ping_array = costas_array(89);
+    // generate the array of piano notes.  Wrote the code because too lazy to type its result, which is:
+    var piano_grand = [25.956543598746574, 27.5, 29.13523509488062, 30.86770632850775, 32.70319566257483, 34.64782887210901, 36.70809598967594, 38.890872965260115, 41.20344461410875, 43.653528929125486, 46.2493028389543, 48.999429497718666, 51.91308719749314, 55, 58.27047018976124, 61.7354126570155, 65.40639132514966, 69.29565774421802, 73.41619197935188, 77.78174593052023, 82.4068892282175, 87.30705785825097, 92.4986056779086, 97.99885899543733, 103.82617439498628, 110, 116.54094037952248, 123.47082531403103, 130.8127826502993, 138.59131548843604, 146.8323839587038, 155.56349186104046, 164.81377845643496, 174.61411571650194, 184.9972113558172, 195.99771799087463, 207.65234878997256, 220, 233.08188075904496, 246.94165062806206, 261.6255653005986, 277.1826309768721, 293.6647679174076, 311.12698372208087, 329.6275569128699, 349.2282314330039, 369.9944227116344, 391.99543598174927, 415.3046975799451, 440, 466.1637615180899, 493.8833012561241, 523.2511306011972, 554.3652619537442, 587.3295358348151, 622.2539674441618, 659.2551138257398, 698.4564628660078, 739.9888454232688, 783.9908719634985, 830.6093951598903, 880, 932.3275230361799, 987.7666025122483, 1046.5022612023945, 1108.7305239074883, 1174.6590716696303, 1244.5079348883237, 1318.5102276514797, 1396.9129257320155, 1479.9776908465376, 1567.981743926997, 1661.2187903197805, 1760, 1864.6550460723597, 1975.533205024496, 2093.004522404789, 2217.4610478149766, 2349.31814333926, 2489.0158697766474, 2637.02045530296, 2793.825851464031, 2959.955381693075, 3135.9634878539946, 3322.437580639561, 3520, 3729.3100921447194, 3951.066410048992];
+    var ping_array = costas_array(89); // generate the costas array of 89 prime
 
-    //console.log( array_diff_vector( ping_array ) );
-    var rand_array = costas_rand_array(89);
+    var rand_array = costas_rand_array(89); // using the non standard costas generator with rand function instead.
 
     // working around the lack of block scope in ES5 and below
-    function in_loop( i ){
+    function play_note( i ){
         setTimeout( function(){
-            oscillator.frequency.value = array[ ping_array[ i ] -1 ];
-            //oscillator.frequency.value = array[ parseInt(rand_array[ i ]) ];
+            oscillator.frequency.value = piano_grand[ ping_array[ i ] -1 ];
             gainNode.gain.value = maxVol;
         }, ( i * duration ) );
+        // turning off the volume just before playing the other note sounds much more staccato and less mushy,
         setTimeout( function(){
             gainNode.gain.value = 0;
         }, ( i * duration ) + ( 0.75 * duration ) );
     }
     // throw it into the stack!!!!
-    for( var i = 0; i < array.length; i++ ){
-        in_loop( i );
+    for( var i = 0; i < ping_array.length; i++ ){
+        play_note( i );
     }
 
     // done with piano turn off that noise!!!!
     setTimeout( function(){
         gainNode.disconnect();
-    }, array.length * duration )
+    }, ping_array.length * duration )
 }
 
 var play = document.querySelector('.play');
@@ -107,93 +109,4 @@ mute.onclick = function() {
         mute.setAttribute('data-muted', 'false');
         mute.innerHTML = "Mute";
     }
-};
-
-// canvas visualization
-
-function random(number1,number2) {
-    var randomNo = number1 + (Math.floor(Math.random() * (number2 - number1)) + 1);
-    return randomNo;
-}
-
-var canvas = document.querySelector('.canvas');
-canvas.width = WIDTH;
-canvas.height = HEIGHT;
-
-var canvasCtx = canvas.getContext('2d');
-
-function canvasDraw() {
-    if(KeyFlag == true) {
-        rX = KeyX;
-        rY = KeyY;
-    } else {
-        rX = CurX;
-        rY = CurY;
-    }
-    rC = Math.floor((gainNode.gain.value/maxVol)*30);
-
-    canvasCtx.globalAlpha = 0.2;
-
-    for(i=1;i<=15;i=i+2) {
-        canvasCtx.beginPath();
-        canvasCtx.fillStyle = 'rgb(' + 100+(i*10) + ',' + Math.floor((gainNode.gain.value/maxVol)*255) + ',' + Math.floor((oscillator.frequency.value/maxFreq)*255) + ')';
-        canvasCtx.arc(rX+random(0,50),rY+random(0,50),rC/2+i,(Math.PI/180)*0,(Math.PI/180)*360,false);
-        canvasCtx.fill();
-        canvasCtx.closePath();
-    }
-}
-
-
-// keyboard controls
-
-var body = document.querySelector('body');
-
-var KeyX = 1;
-var KeyY = 0.01;
-var KeyFlag = false;
-
-body.onkeydown = function(e) {
-    KeyFlag = true;
-
-    // 37 is arrow left, 39 is arrow right,
-    // 38 is arrow up, 40 is arrow down
-
-    if(e.keyCode == 37) {
-        KeyX -= 20;
-    }
-
-    if(e.keyCode == 39) {
-        KeyX += 20;
-    }
-
-    if(e.keyCode == 38) {
-        KeyY -= 20;
-    }
-
-    if(e.keyCode == 40) {
-        KeyY += 20;
-    }
-
-    // set max and min constraints for KeyX and KeyY
-
-    if(KeyX < 1) {
-        KeyX = 1;
-    }
-
-    if(KeyX > WIDTH) {
-        KeyX = WIDTH;
-    }
-
-    if(KeyY < 0.01) {
-        KeyY = 0.01;
-    }
-
-    if(KeyY > HEIGHT) {
-        KeyY = HEIGHT;
-    }
-
-    oscillator.frequency.value = (KeyX/WIDTH) * maxFreq;
-    gainNode.gain.value = (KeyY/HEIGHT) * maxVol;
-
-    canvasDraw();
 };
