@@ -11,26 +11,6 @@ function prime_checker ( p ){
     return true;
 }
 
-function costas_array ( p ){
-    var result = [];
-    var element;
-    if( prime_checker( p )){
-        result.push( 1 );
-        for( var i = 1; i < p; i++ ){
-            element = result[ i-1 ];
-            element *= 3;
-            while( element > ( p ) ){
-                element -= p;
-            }
-            result.push( element );
-        }
-    }
-    else{
-        console.log( 'bad number:' + p );
-    }
-    return result;
-}
-
 // generate array of the differences between the adjoining elements
 function array_diff_vector( array ){
     var result = [];
@@ -64,6 +44,42 @@ function set_of_values( array ){
     return set;
 }
 
+// verifying that the costas array is truly a costas array:
+// 2 criteria:
+// the differences between adjacent cells are all unique vectors
+// the values in the array are not repeated.
+function costas_verify ( array ){
+    var result;
+    var diff_array = array_diff_vector( array );
+    var array_set = set_of_values( array );
+    var diff_array_set = set_of_values( diff_array );
+    //console.log( 'diff_array length', diff_array.length );
+    //console.log( 'diff_array_set length', diff_array_set.length );
+    return ( diff_array.length === diff_array_set.length && array_set.length === array.length );
+}
+
+
+// only the 89 element costas array is calculated by the multiply by three, modulo method
+function costas_array ( p ){
+    var result = [];
+    var element;
+    if( prime_checker( p )){
+        result.push( 1 );
+        for( var i = 1; i < p; i++ ){
+            element = result[ i-1 ];
+            element *= 3;
+            while( element > ( p ) ){
+                element -= p;
+            }
+            result.push( element );
+        }
+    }
+    else{
+        console.log( 'bad number:' + p );
+    }
+    return result;
+}
+
 function costas_rand_array ( p ){
     var result = [];
     var used_diffs_array = [];
@@ -82,4 +98,6 @@ function costas_rand_array ( p ){
 function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
 }
+
+
 

@@ -59,10 +59,10 @@ function play_piano(){
     gainNode.connect(audioCtx.destination);
     // millis each note plays!
     var duration = 100;
-    var array = piano_array();
+    var array = piano_array(); // frequencies, in Hz of the keys of the piano
     var ping_array = costas_array(89);
-    console.log( array_diff_vector( ping_array ) );
 
+    //console.log( array_diff_vector( ping_array ) );
     var rand_array = costas_rand_array(89);
 
     // working around the lack of block scope in ES5 and below
